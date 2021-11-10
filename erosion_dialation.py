@@ -1,5 +1,7 @@
 import numpy as np
 import cv2
+from copy import deepcopy
+
 
 #input the image
 img = cv2.imread("erosion_dialation.png")
@@ -15,8 +17,8 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
 
-#filter size 7x7
-filterK = np.ones((7,7))
+#filter size 5x5
+filterK = np.ones((5,5))
 #print(filterK)
 
 
@@ -26,6 +28,8 @@ F = filterK.shape
 
 #convert into 0 and 1
 binary = binary/255
+#copy for dialation
+binary2 = deepcopy(binary)
 
 
 
@@ -38,7 +42,7 @@ C = S[1]+F[1]-1
 N = np.zeros((R,C))
 
 
-#insert the image
+#insert the image with padding
 for i in range(S[0]):
     for j in range(S[1]):
         N[i+np.int((F[0]-1)/2),j+np.int((F[1]-1)/2)] = binary[i,j]
@@ -54,7 +58,9 @@ for i in range(S[0]):
             binary[i,j] = 1
         else:
             binary[i,j] = 0
+#output image of erosion
 cv2.imshow("erosion", binary)
+#cv2.imwrite("erosion_output.png", binary)
 #cv2.imwrite("erosion", binary)
 
 #use filter for dialation
@@ -64,12 +70,13 @@ for i in range(S[0]):
         result = (k == filterK)
         final = np.any(result == True)
         if final:
-            binary[i,j] = 1
+            binary2[i,j] = 1
         else:
-            binary[i,j] = 0
+            binary2[i,j] = 0
             
-#output image
-cv2.imshow("dialation", binary)
+#output image of dialation
+cv2.imshow("dialation", binary2)
+#cv2.imwrite("dialation_output.png", binary)
 #cv2.imwrite("dialation", binary)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
